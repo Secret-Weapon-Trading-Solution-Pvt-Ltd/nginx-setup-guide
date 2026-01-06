@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nginx Setup Guide - MarketForecaster Admin Panel</title>
+    <title>Nginx Setup Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -198,6 +198,456 @@
 
         [data-theme="light"] .command-block {
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Configuration Panel Styles */
+        .config-panel {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: -50px auto 25px;
+            padding: 0 20px;
+            transition: margin 0.3s ease;
+        }
+
+        .config-panel.collapsed {
+            margin-bottom: 8px;
+        }
+
+        .config-card {
+            background: linear-gradient(135deg, rgba(26, 26, 37, 0.95), rgba(13, 40, 71, 0.9));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 14px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .config-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+            background-size: 300% 100%;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .config-header {
+            background: linear-gradient(135deg, rgba(13, 40, 71, 0.8), rgba(26, 26, 37, 0.8));
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .config-header:hover {
+            background: linear-gradient(135deg, rgba(13, 40, 71, 1), rgba(0, 217, 255, 0.08));
+        }
+
+        .config-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .config-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px var(--accent-cyan-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .config-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+            animation: iconShine 3s ease-in-out infinite;
+        }
+
+        @keyframes iconShine {
+            0%, 100% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .config-icon svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .config-title-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .config-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-badge {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px 3px 18px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            color: var(--accent-green);
+            position: relative;
+        }
+
+        .config-badge::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: livePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+        }
+
+        .config-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .config-toggle {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .config-toggle:hover {
+            background: rgba(0, 217, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .config-toggle svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent-cyan);
+            transition: transform 0.3s ease;
+        }
+
+        .config-card.collapsed .config-toggle svg {
+            transform: rotate(180deg);
+        }
+
+        .config-card.collapsed .config-body {
+            display: none;
+        }
+
+        .config-body {
+            padding: 16px 20px;
+            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.15));
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .config-field.full-width {
+            grid-column: span 2;
+        }
+
+        .config-field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-field label svg {
+            width: 14px;
+            height: 14px;
+            color: var(--accent-cyan);
+        }
+
+        .config-field input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .config-field input:hover {
+            border-color: rgba(0, 217, 255, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .config-field input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px var(--accent-cyan-glow);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .config-field input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .config-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .config-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .config-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .config-btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+            background-size: 200% 200%;
+            border: none;
+            color: white;
+            box-shadow:
+                0 8px 25px var(--accent-cyan-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .config-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 12px 35px var(--accent-cyan-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .config-btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .config-btn-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+
+        .config-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+
+        /* Command highlight animation */
+        .command-block.highlight {
+            position: relative;
+            z-index: 100;
+            border-color: #00d9ff !important;
+            box-shadow: 0 0 0 4px #00d9ff, 0 0 50px rgba(0, 217, 255, 0.8), 0 0 100px rgba(0, 217, 255, 0.4) !important;
+            animation: commandHighlight 2s ease-out forwards;
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }
+
+        .command-block.highlight .command-content {
+            background: rgba(0, 217, 255, 0.2) !important;
+            animation: contentFlash 2s ease-out forwards;
+        }
+
+        @keyframes commandHighlight {
+            0%, 20% {
+                border-color: #00d9ff;
+                box-shadow: 0 0 0 3px #00d9ff, 0 0 40px rgba(0, 217, 255, 0.6);
+            }
+            100% {
+                border-color: rgba(255, 255, 255, 0.06);
+                box-shadow: none;
+            }
+        }
+
+        @keyframes contentFlash {
+            0%, 20% {
+                background: rgba(0, 217, 255, 0.25);
+            }
+            100% {
+                background: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        [data-theme="light"] .command-block.highlight {
+            box-shadow: 0 0 0 3px #0077b6, 0 0 30px rgba(0, 119, 182, 0.4) !important;
+        }
+
+        [data-theme="light"] .command-block.highlight .command-content {
+            background: rgba(0, 119, 182, 0.15) !important;
+        }
+
+        /* Architecture port highlight */
+        .arch-node-port.highlight {
+            background: #00d9ff !important;
+            color: #0a0a0f !important;
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.7) !important;
+            animation: portHighlight 2s ease-out forwards;
+        }
+
+        @keyframes portHighlight {
+            0%, 20% {
+                background: #00d9ff;
+                color: #0a0a0f;
+                transform: scale(1.15);
+                box-shadow: 0 0 25px rgba(0, 217, 255, 0.7);
+            }
+            100% {
+                background: rgba(0, 217, 255, 0.1);
+                color: #00d9ff;
+                transform: scale(1);
+                box-shadow: none;
+            }
+        }
+
+        /* Dynamic value highlight */
+        .dynamic-value {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(139, 92, 246, 0.15));
+            border-radius: 4px;
+            padding: 0 4px;
+            border-bottom: 2px solid var(--accent-cyan);
+        }
+
+        [data-theme="light"] .config-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-color: rgba(0, 119, 182, 0.2);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .config-header {
+            background: linear-gradient(135deg, #1a365d, #2d4a7c);
+        }
+
+        [data-theme="light"] .config-body {
+            background: linear-gradient(180deg, transparent, rgba(0, 119, 182, 0.03));
+        }
+
+        [data-theme="light"] .config-field input {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+
+        [data-theme="light"] .config-field input:hover {
+            border-color: rgba(0, 119, 182, 0.3);
+            background: #ffffff;
+        }
+
+        [data-theme="light"] .config-field input:focus {
+            border-color: var(--accent-cyan);
+            background: #ffffff;
+        }
+
+        [data-theme="light"] .config-btn-secondary {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .config-panel {
+                margin-top: -30px;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .config-field.full-width {
+                grid-column: span 1;
+            }
+
+            .config-header {
+                padding: 12px 16px;
+            }
+
+            .config-body {
+                padding: 14px 16px;
+            }
         }
 
         * {
@@ -1144,7 +1594,7 @@
                 Production Deployment Guide
             </div>
             <h1>Nginx Configuration</h1>
-            <p class="subtitle">MarketForecaster Admin Panel - Complete Setup</p>
+            <p class="subtitle">Complete Setup Guide with SSL & Reverse Proxy</p>
 
             <!-- Enhanced Architecture Diagram -->
             <div class="architecture-wrapper">
@@ -1219,7 +1669,7 @@
                                         <div class="arch-node-title">Frontend</div>
                                         <div class="arch-node-desc">React / Next.js</div>
                                     </div>
-                                    <div class="arch-node-port">:3000</div>
+                                    <div class="arch-node-port" data-arch-port="frontend">:3000</div>
                                 </div>
                             </div>
 
@@ -1235,7 +1685,7 @@
                                         <div class="arch-node-title">Backend API</div>
                                         <div class="arch-node-desc">Node.js / Express</div>
                                     </div>
-                                    <div class="arch-node-port">:8500</div>
+                                    <div class="arch-node-port" data-arch-port="backend">:8500</div>
                                 </div>
                             </div>
                         </div>
@@ -1245,12 +1695,87 @@
         </div>
     </header>
 
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+        <div class="config-card" id="configCard">
+            <div class="config-header" onclick="toggleConfig()">
+                <div class="config-header-left">
+                    <div class="config-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </div>
+                    <div class="config-title-wrap">
+                        <div class="config-title">
+                            Your Configuration
+                            <span class="config-badge">Live Update</span>
+                        </div>
+                        <div class="config-subtitle">Just type - all commands update automatically as you type!</div>
+                    </div>
+                </div>
+                <div class="config-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="18 15 12 9 6 15"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="config-body">
+                <div class="config-grid">
+                    <div class="config-field full-width">
+                        <label>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            Domain Name
+                        </label>
+                        <input type="text" id="configDomain" placeholder="yourdomain.com" value="example.com">
+                    </div>
+                    <div class="config-field">
+                        <label>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+                            </svg>
+                            Frontend Port
+                        </label>
+                        <input type="text" id="configFrontendPort" placeholder="3000" value="3000">
+                    </div>
+                    <div class="config-field">
+                        <label>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 10h-4V4a2 2 0 0 0-4 0v6H6a2 2 0 0 0 0 4h4v6a2 2 0 0 0 4 0v-6h4a2 2 0 0 0 0-4z"/>
+                            </svg>
+                            Backend API Port
+                        </label>
+                        <input type="text" id="configBackendPort" placeholder="8500" value="8500">
+                    </div>
+                    <div class="config-field full-width">
+                        <label>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Project Directory
+                        </label>
+                        <input type="text" id="configProjectDir" placeholder="~/project/path" value="~/MyProject/app">
+                    </div>
+                </div>
+                <div class="config-actions">
+                    <button class="config-btn config-btn-secondary" onclick="resetConfig()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+                        </svg>
+                        Reset to Defaults
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Important Notice -->
-        <div class="alert alert-warning">
-            <div class="alert-icon">&#9888;&#65039;</div>
+        <div class="alert alert-success">
+            <div class="alert-icon">&#9889;</div>
             <div>
-                <strong>Important:</strong> Replace <code>dev2.marketforecaster.com</code> with <strong>your own domain</strong> throughout this guide.
+                <strong>Tip:</strong> Start typing in the <strong>Configuration Panel</strong> above - all commands update <strong>live</strong> as you type!
             </div>
         </div>
 
@@ -1282,7 +1807,7 @@
             <h2><span class="section-number">1</span> Overview</h2>
 
             <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 1.05rem; line-height: 1.8;">
-                This guide walks you through setting up Nginx as a reverse proxy for the MarketForecaster Admin Panel with SSL/TLS termination using Let's Encrypt certificates.
+                This guide walks you through setting up Nginx as a reverse proxy with SSL/TLS termination using Let's Encrypt certificates.
             </p>
 
             <h3>What This Setup Achieves</h3>
@@ -1328,7 +1853,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">nslookup dev2.marketforecaster.com</div>
+                <div class="command-content" data-template="dns-lookup">nslookup dev2.marketforecaster.com</div>
             </div>
             <p class="purpose">Confirms DNS A-record is correctly pointing to this server</p>
         </section>
@@ -1454,7 +1979,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">sudo nano /etc/nginx/sites-available/dev2.marketforecaster.com</div>
+                <div class="command-content" data-template="nginx-create-file">sudo nano /etc/nginx/sites-available/dev2.marketforecaster.com</div>
             </div>
             <p class="purpose">Creates a dedicated Nginx config file for this domain</p>
 
@@ -1484,7 +2009,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">server {
+                <div class="command-content" data-template="nginx-config">server {
     listen 80;
     server_name dev2.marketforecaster.com;
 
@@ -1520,7 +2045,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">sudo ln -s /etc/nginx/sites-available/dev2.marketforecaster.com /etc/nginx/sites-enabled/</div>
+                <div class="command-content" data-template="nginx-enable-site">sudo ln -s /etc/nginx/sites-available/dev2.marketforecaster.com /etc/nginx/sites-enabled/</div>
             </div>
             <p class="purpose">Creates symlink to activate the site configuration</p>
 
@@ -1551,14 +2076,9 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">sudo certbot --nginx -d dev2.marketforecaster.com</div>
+                <div class="command-content" data-template="ssl-certbot">sudo certbot --nginx -d dev2.marketforecaster.com</div>
             </div>
             <p class="purpose">Requests and installs SSL certificate from Let's Encrypt</p>
-
-            <div class="alert alert-warning">
-                <div class="alert-icon">&#9888;&#65039;</div>
-                <div>Replace with your own domain name</div>
-            </div>
 
             <div class="alert alert-success">
                 <div class="alert-icon">&#128231;</div>
@@ -1579,7 +2099,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">cd ~/MarketForecaster/MarketForecaster-Admin-Panel</div>
+                <div class="command-content" data-template="docker-cd">cd ~/MarketForecaster/MarketForecaster-Admin-Panel</div>
             </div>
             <p class="purpose">Navigate into Admin Panel project directory</p>
 
@@ -1627,7 +2147,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">https://dev2.marketforecaster.com/*</div>
+                <div class="command-content" data-template="keycloak-redirect">https://dev2.marketforecaster.com/*</div>
             </div>
 
             <h4>Web Origins</h4>
@@ -1639,7 +2159,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">https://dev2.marketforecaster.com</div>
+                <div class="command-content" data-template="keycloak-origin">https://dev2.marketforecaster.com</div>
             </div>
 
             <div class="alert alert-warning">
@@ -1661,7 +2181,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">curl -I https://dev2.marketforecaster.com</div>
+                <div class="command-content" data-template="test-frontend">curl -I https://dev2.marketforecaster.com</div>
             </div>
             <p class="purpose">Confirms HTTPS access to frontend is working</p>
 
@@ -1674,7 +2194,7 @@
                         Copy
                     </button>
                 </div>
-                <div class="command-content">curl -I https://dev2.marketforecaster.com/api/health</div>
+                <div class="command-content" data-template="test-backend">curl -I https://dev2.marketforecaster.com/api/health</div>
             </div>
             <p class="purpose">Confirms API routing through Nginx reverse proxy</p>
         </section>
@@ -1748,11 +2268,229 @@
                 <span class="footer-badge">Ubuntu 24.04 LTS</span>
                 <span class="footer-badge">Nginx + Docker</span>
             </div>
-            <p>MarketForecaster Admin Panel - Production Deployment Guide</p>
+            <p>Nginx Production Deployment Guide</p>
         </div>
     </footer>
 
     <script>
+        // Default configuration values
+        const defaultConfig = {
+            domain: 'example.com',
+            frontendPort: '3000',
+            backendPort: '8500',
+            projectDir: '~/MyProject/app'
+        };
+
+        // Current configuration
+        let currentConfig = { ...defaultConfig };
+
+        // Command templates - these define the dynamic content
+        const commandTemplates = {
+            // Section 2: DNS
+            'dns-lookup': 'nslookup {{domain}}',
+
+            // Section 5: Nginx Config
+            'nginx-create-file': 'sudo nano /etc/nginx/sites-available/{{domain}}',
+            'nginx-config': `server {
+    listen 80;
+    server_name {{domain}};
+
+    # Backend API routing
+    location /api/ {
+        rewrite ^/api/(.*) /$1 break;
+        proxy_pass http://localhost:{{backendPort}};
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Frontend routing
+    location / {
+        proxy_pass http://localhost:{{frontendPort}};
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}`,
+            'nginx-enable-site': 'sudo ln -s /etc/nginx/sites-available/{{domain}} /etc/nginx/sites-enabled/',
+
+            // Section 6: SSL
+            'ssl-certbot': 'sudo certbot --nginx -d {{domain}}',
+
+            // Section 7: Docker
+            'docker-cd': 'cd {{projectDir}}',
+
+            // Section 8: Keycloak
+            'keycloak-redirect': 'https://{{domain}}/*',
+            'keycloak-origin': 'https://{{domain}}',
+
+            // Section 9: Testing
+            'test-frontend': 'curl -I https://{{domain}}',
+            'test-backend': 'curl -I https://{{domain}}/api/health',
+
+            // Architecture diagram ports
+            'arch-frontend-port': ':{{frontendPort}}',
+            'arch-backend-port': ':{{backendPort}}'
+        };
+
+        // Debounce function for auto-update
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Auto-update function (debounced)
+        const autoUpdate = debounce(() => {
+            applyConfigSilent();
+        }, 300);
+
+        // Apply config without showing status message (for auto-update)
+        function applyConfigSilent() {
+            currentConfig.domain = document.getElementById('configDomain').value || defaultConfig.domain;
+            currentConfig.frontendPort = document.getElementById('configFrontendPort').value || defaultConfig.frontendPort;
+            currentConfig.backendPort = document.getElementById('configBackendPort').value || defaultConfig.backendPort;
+            currentConfig.projectDir = document.getElementById('configProjectDir').value || defaultConfig.projectDir;
+
+            saveConfig();
+            updateAllCommands();
+        }
+
+        // Update all command blocks with current config
+        function updateAllCommands() {
+            document.querySelectorAll('[data-template]').forEach(el => {
+                const templateKey = el.getAttribute('data-template');
+                if (commandTemplates[templateKey]) {
+                    const newContent = replaceTemplateVars(commandTemplates[templateKey]);
+                    const oldContent = el.textContent;
+
+                    // Only update and highlight if content actually changed
+                    if (oldContent !== newContent) {
+                        el.textContent = newContent;
+                        highlightCommand(el);
+                    }
+                }
+            });
+
+            // Update architecture diagram ports
+            const frontendPortEl = document.querySelector('[data-arch-port="frontend"]');
+            const backendPortEl = document.querySelector('[data-arch-port="backend"]');
+
+            if (frontendPortEl) {
+                const newPort = ':' + currentConfig.frontendPort;
+                if (frontendPortEl.textContent !== newPort) {
+                    frontendPortEl.textContent = newPort;
+                    highlightPort(frontendPortEl);
+                }
+            }
+
+            if (backendPortEl) {
+                const newPort = ':' + currentConfig.backendPort;
+                if (backendPortEl.textContent !== newPort) {
+                    backendPortEl.textContent = newPort;
+                    highlightPort(backendPortEl);
+                }
+            }
+        }
+
+        // Highlight a command block that changed
+        function highlightCommand(el) {
+            const commandBlock = el.closest('.command-block');
+            if (commandBlock) {
+                // Remove existing highlight class to restart animation
+                commandBlock.classList.remove('highlight');
+                // Trigger reflow to restart animation
+                void commandBlock.offsetWidth;
+                commandBlock.classList.add('highlight');
+
+                // Remove class after animation (2 seconds)
+                setTimeout(() => {
+                    commandBlock.classList.remove('highlight');
+                }, 2000);
+            }
+        }
+
+        // Highlight architecture port that changed
+        function highlightPort(el) {
+            el.classList.remove('highlight');
+            void el.offsetWidth;
+            el.classList.add('highlight');
+
+            setTimeout(() => {
+                el.classList.remove('highlight');
+            }, 2000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            applyConfigSilent();
+
+            // Add auto-update listeners to all config inputs
+            const inputs = ['configDomain', 'configFrontendPort', 'configBackendPort', 'configProjectDir'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', autoUpdate);
+            });
+        });
+
+        // Load configuration from localStorage
+        function loadConfig() {
+            const saved = localStorage.getItem('nginxGuideConfig');
+            if (saved) {
+                try {
+                    currentConfig = { ...defaultConfig, ...JSON.parse(saved) };
+                    document.getElementById('configDomain').value = currentConfig.domain;
+                    document.getElementById('configFrontendPort').value = currentConfig.frontendPort;
+                    document.getElementById('configBackendPort').value = currentConfig.backendPort;
+                    document.getElementById('configProjectDir').value = currentConfig.projectDir;
+                } catch (e) {
+                    console.error('Error loading config:', e);
+                }
+            }
+        }
+
+        // Save configuration to localStorage
+        function saveConfig() {
+            localStorage.setItem('nginxGuideConfig', JSON.stringify(currentConfig));
+        }
+
+        // Toggle config panel
+        function toggleConfig() {
+            const card = document.getElementById('configCard');
+            const panel = card.closest('.config-panel');
+            card.classList.toggle('collapsed');
+            panel.classList.toggle('collapsed');
+        }
+
+        // Reset to defaults
+        function resetConfig() {
+            currentConfig = { ...defaultConfig };
+            document.getElementById('configDomain').value = defaultConfig.domain;
+            document.getElementById('configFrontendPort').value = defaultConfig.frontendPort;
+            document.getElementById('configBackendPort').value = defaultConfig.backendPort;
+            document.getElementById('configProjectDir').value = defaultConfig.projectDir;
+            applyConfigSilent();
+        }
+
+        // Replace template variables with actual values
+        function replaceTemplateVars(template) {
+            return template
+                .replace(/\{\{domain\}\}/g, currentConfig.domain)
+                .replace(/\{\{frontendPort\}\}/g, currentConfig.frontendPort)
+                .replace(/\{\{backendPort\}\}/g, currentConfig.backendPort)
+                .replace(/\{\{projectDir\}\}/g, currentConfig.projectDir);
+        }
+
         // Theme Toggle functionality
         const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
