@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nginx Setup Guide - MarketForecaster Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #0a0a0f;
+            --bg-card: #1a1a25;
+            --bg-card-hover: #22222f;
+            --bg-header: #0d2847;
+            --accent-cyan: #00d9ff;
+            --accent-cyan-glow: rgba(0, 217, 255, 0.4);
+            --accent-green: #10b981;
+            --accent-green-glow: rgba(16, 185, 129, 0.4);
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            --accent-purple-glow: rgba(139, 92, 246, 0.4);
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-light: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Dark theme - Consistent background */
+        body,
+        .hero,
+        .container,
+        .footer,
+        .section {
+            background: transparent !important;
+        }
+
+        .hero::before {
+            display: none;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #f0f7ff;
+            --bg-secondary: #f0f7ff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #ffffff;
+            --bg-header: #1a365d;
+            --accent-cyan: #0077b6;
+            --accent-cyan-glow: rgba(0, 119, 182, 0.25);
+            --accent-green: #087f5b;
+            --accent-green-glow: rgba(8, 127, 91, 0.25);
+            --accent-yellow: #c2410c;
+            --accent-orange: #c2410c;
+            --accent-purple: #6d28d9;
+            --accent-purple-glow: rgba(109, 40, 217, 0.25);
+            --accent-pink: #be185d;
+            --accent-blue: #1d4ed8;
+            --text-primary: #1e293b;
+            --text-secondary: #334155;
+            --text-muted: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --border-light: rgba(0, 0, 0, 0.15);
+            --glass: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Light theme - Force same background everywhere */
+        [data-theme="light"],
+        [data-theme="light"] body,
+        [data-theme="light"] .hero,
+        [data-theme="light"] .container,
+        [data-theme="light"] .footer,
+        [data-theme="light"] .section {
+            background: transparent !important;
+        }
+
+        [data-theme="light"] .progress-container {
+            background: #e0efff !important;
+        }
+
+        [data-theme="light"] .bg-grid {
+            background-color: #f0f7ff;
+            background-image:
+                linear-gradient(rgba(0, 119, 182, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 119, 182, 0.08) 1px, transparent 1px);
+        }
+
+        [data-theme="light"] .hero::before {
+            display: none;
+        }
+
+        [data-theme="light"] .command-content {
+            background: #1e293b;
+            color: #38bdf8;
+        }
+
+        [data-theme="light"] .config-block .command-content {
+            color: #4ade80;
+        }
+
+        [data-theme="light"] .alert code {
+            background: rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+
+        [data-theme="light"] .command-header {
+            background: #1a365d;
+        }
+
+        [data-theme="light"] .command-label {
+            color: #e2e8f0;
+        }
+
+        [data-theme="light"] .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme="light"] .copy-btn:hover {
+            background: #38bdf8;
+            color: #1e293b;
+            border-color: #38bdf8;
+        }
+
+        [data-theme="light"] .architecture {
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="light"] .arch-node {
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="light"] .arch-node:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .toc {
+            background: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="light"] .section-number {
+            box-shadow: 0 4px 12px rgba(0, 119, 182, 0.25);
+        }
+
+        [data-theme="light"] .table-wrapper {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] th {
+            background: #1a365d;
+            color: #ffffff;
+        }
+
+        [data-theme="light"] .alert-warning {
+            background: rgba(194, 65, 12, 0.08);
+            border-color: rgba(194, 65, 12, 0.25);
+        }
+
+        [data-theme="light"] .alert-success {
+            background: rgba(8, 127, 91, 0.08);
+            border-color: rgba(8, 127, 91, 0.25);
+        }
+
+        [data-theme="light"] .alert-info {
+            background: rgba(29, 78, 216, 0.08);
+            border-color: rgba(29, 78, 216, 0.25);
+        }
+
+        [data-theme="light"] .footer {
+            border-top-color: rgba(0, 119, 182, 0.12);
+        }
+
+        [data-theme="light"] .footer-badge {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .protocol-badge {
+            background: rgba(8, 127, 91, 0.1);
+            border-color: rgba(8, 127, 91, 0.25);
+        }
+
+        [data-theme="light"] h1 {
+            background: linear-gradient(135deg, #1e293b 0%, #0077b6 50%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        [data-theme="light"] .command-block {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #0a0a0f;
+            background-image:
+                linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--bg-secondary);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+            box-shadow: 0 0 20px var(--accent-cyan-glow);
+            transition: width 0.1s ease-out;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 80px 20px 100px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(0, 217, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.05) 0%, transparent 60%);
+            animation: heroGlow 15s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes heroGlow {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-5%, -5%) rotate(5deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent-cyan);
+            margin-bottom: 28px;
+            animation: fadeInDown 0.6s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        /* Architecture Diagram - Enhanced */
+        .architecture-wrapper {
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .architecture {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(26, 26, 37, 0.8), rgba(13, 40, 71, 0.4));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .architecture::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        }
+
+        .arch-title {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .arch-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        /* Architecture Nodes */
+        .arch-node {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            min-width: 280px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .arch-node:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .arch-node-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .arch-node-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 14px;
+            background: inherit;
+            filter: blur(10px);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .icon-internet { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .icon-nginx { background: linear-gradient(135deg, #10b981, #059669); }
+        .icon-frontend { background: linear-gradient(135deg, #00d9ff, #0891b2); }
+        .icon-backend { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .icon-docker { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+
+        .arch-node-info {
+            flex: 1;
+        }
+
+        .arch-node-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .arch-node-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .arch-node-port {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        /* Connection Lines */
+        .arch-connection {
+            position: relative;
+            height: 50px;
+            width: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arch-line {
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arch-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.8), transparent);
+            animation: flowDown 2s ease-in-out infinite;
+        }
+
+        @keyframes flowDown {
+            0% { top: -50%; }
+            100% { top: 150%; }
+        }
+
+        .arch-arrow {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--accent-purple);
+            font-size: 1.2rem;
+        }
+
+        /* Branch connections */
+        .arch-branch {
+            display: flex;
+            gap: 40px;
+            position: relative;
+            padding-top: 20px;
+        }
+
+        .arch-branch::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 140px);
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 2px;
+        }
+
+        .arch-branch-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .arch-branch-line {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arch-branch-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: flowDown 2s ease-in-out infinite;
+        }
+
+        .arch-branch-item:nth-child(2) .arch-branch-line::after {
+            animation-delay: 0.3s;
+        }
+
+        /* Protocol Labels */
+        .protocol-badge {
+            position: absolute;
+            right: -100px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            white-space: nowrap;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Alert Boxes */
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px 22px;
+            border-radius: 16px;
+            margin: 28px 0;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .alert-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            color: var(--accent-orange);
+        }
+
+        .alert-warning .alert-icon {
+            background: rgba(249, 115, 22, 0.2);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--accent-green);
+        }
+
+        .alert-success .alert-icon {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: var(--accent-blue);
+        }
+
+        .alert-info .alert-icon {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .alert code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: linear-gradient(135deg, var(--bg-card), rgba(13, 40, 71, 0.3));
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .toc-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .toc-title svg {
+            color: var(--accent-cyan);
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .toc-item:hover {
+            background: rgba(0, 217, 255, 0.08);
+            color: var(--accent-cyan);
+            border-color: rgba(0, 217, 255, 0.2);
+            transform: translateX(4px);
+        }
+
+        .toc-num {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--bg-header), var(--bg-card));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), transparent);
+        }
+
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 8px 20px var(--accent-cyan-glow);
+        }
+
+        h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 32px 0 14px 0;
+        }
+
+        h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 2px;
+        }
+
+        h4 {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin: 24px 0 12px 0;
+        }
+
+        /* Command Blocks */
+        .command-block {
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin: 14px 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .command-block:hover {
+            border-color: rgba(0, 217, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 217, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .command-header {
+            background: linear-gradient(135deg, var(--bg-header), rgba(13, 40, 71, 0.8));
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .command-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .command-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green-glow);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border-color: var(--accent-cyan);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px var(--accent-cyan-glow);
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .command-content {
+            padding: 18px 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--accent-cyan);
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+        }
+
+        .config-block .command-content {
+            color: var(--accent-green);
+            line-height: 1.7;
+        }
+
+        /* Purpose Text */
+        .purpose {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 10px 0 24px 0;
+            padding-left: 16px;
+            border-left: 3px solid var(--border-light);
+            font-style: italic;
+        }
+
+        /* Table Styling */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 18px 0;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--bg-header), rgba(13, 40, 71, 0.8));
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            border-top: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        tr {
+            transition: background 0.2s ease;
+        }
+
+        tr:hover td {
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-badges {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-badge {
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-card);
+            border-radius: 5px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--border-light);
+            background: var(--bg-card);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 6px 25px var(--accent-cyan-glow);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun-icon {
+            color: var(--accent-yellow);
+            display: none;
+        }
+
+        .theme-toggle .moon-icon {
+            color: var(--accent-purple);
+            display: block;
+        }
+
+        [data-theme="light"] .theme-toggle .sun-icon {
+            display: block;
+        }
+
+        [data-theme="light"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 50px 16px 70px;
+            }
+
+            .architecture {
+                padding: 24px 16px;
+            }
+
+            .arch-node {
+                min-width: auto;
+                padding: 12px 16px;
+            }
+
+            .arch-node-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .arch-branch {
+                flex-direction: column;
+                gap: 0;
+                padding-top: 0;
+            }
+
+            .arch-branch::before {
+                display: none;
+            }
+
+            .arch-branch-item {
+                width: 100%;
+            }
+
+            .arch-branch-line {
+                height: 30px;
+            }
+
+            .protocol-badge {
+                display: none;
+            }
+
+            .container {
+                padding: 30px 16px 50px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            .command-content {
+                font-size: 0.8rem;
+                padding: 14px 16px;
+            }
+
+            .toc-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+    </button>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                Production Deployment Guide
+            </div>
+            <h1>Nginx Configuration</h1>
+            <p class="subtitle">MarketForecaster Admin Panel - Complete Setup</p>
+
+            <!-- Enhanced Architecture Diagram -->
+            <div class="architecture-wrapper">
+                <div class="architecture">
+                    <div class="arch-title">System Architecture Overview</div>
+                    <div class="arch-diagram">
+                        <!-- Internet Node -->
+                        <div class="arch-node" style="border-color: rgba(59, 130, 246, 0.3);">
+                            <div class="arch-node-icon icon-internet">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </div>
+                            <div class="arch-node-info">
+                                <div class="arch-node-title">Internet</div>
+                                <div class="arch-node-desc">External Traffic</div>
+                            </div>
+                            <div class="arch-node-port">HTTPS :443</div>
+                        </div>
+
+                        <!-- Connection Line -->
+                        <div class="arch-connection">
+                            <div class="arch-line"></div>
+                            <span class="protocol-badge">TLS 1.3 / SSL</span>
+                        </div>
+
+                        <!-- Nginx Node -->
+                        <div class="arch-node" style="border-color: rgba(16, 185, 129, 0.3);">
+                            <div class="arch-node-icon icon-nginx">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+                                </svg>
+                            </div>
+                            <div class="arch-node-info">
+                                <div class="arch-node-title">Nginx</div>
+                                <div class="arch-node-desc">Reverse Proxy + SSL Termination</div>
+                            </div>
+                            <div class="arch-node-port">Let's Encrypt</div>
+                        </div>
+
+                        <!-- Connection Line -->
+                        <div class="arch-connection">
+                            <div class="arch-line"></div>
+                            <span class="protocol-badge">HTTP Proxy</span>
+                        </div>
+
+                        <!-- Docker Container -->
+                        <div class="arch-node" style="border-color: rgba(14, 165, 233, 0.3); margin-bottom: 20px;">
+                            <div class="arch-node-icon icon-docker">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M17 2l-5 5-5-5"/>
+                                </svg>
+                            </div>
+                            <div class="arch-node-info">
+                                <div class="arch-node-title">Docker Compose</div>
+                                <div class="arch-node-desc">Container Orchestration</div>
+                            </div>
+                            <div class="arch-node-port">Network</div>
+                        </div>
+
+                        <!-- Branch to Frontend & Backend -->
+                        <div class="arch-branch">
+                            <div class="arch-branch-item">
+                                <div class="arch-branch-line"></div>
+                                <div class="arch-node" style="border-color: rgba(0, 217, 255, 0.3); margin-top: 10px;">
+                                    <div class="arch-node-icon icon-frontend">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+                                        </svg>
+                                    </div>
+                                    <div class="arch-node-info">
+                                        <div class="arch-node-title">Frontend</div>
+                                        <div class="arch-node-desc">React / Next.js</div>
+                                    </div>
+                                    <div class="arch-node-port">:3000</div>
+                                </div>
+                            </div>
+
+                            <div class="arch-branch-item">
+                                <div class="arch-branch-line"></div>
+                                <div class="arch-node" style="border-color: rgba(139, 92, 246, 0.3); margin-top: 10px;">
+                                    <div class="arch-node-icon icon-backend">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                            <path d="M18 10h-4V4a2 2 0 0 0-4 0v6H6a2 2 0 0 0 0 4h4v6a2 2 0 0 0 4 0v-6h4a2 2 0 0 0 0-4z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="arch-node-info">
+                                        <div class="arch-node-title">Backend API</div>
+                                        <div class="arch-node-desc">Node.js / Express</div>
+                                    </div>
+                                    <div class="arch-node-port">:8500</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Important Notice -->
+        <div class="alert alert-warning">
+            <div class="alert-icon">&#9888;&#65039;</div>
+            <div>
+                <strong>Important:</strong> Replace <code>dev2.marketforecaster.com</code> with <strong>your own domain</strong> throughout this guide.
+            </div>
+        </div>
+
+        <!-- Table of Contents -->
+        <nav class="toc">
+            <div class="toc-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                    <circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/>
+                </svg>
+                Quick Navigation
+            </div>
+            <div class="toc-grid">
+                <a href="#section-1" class="toc-item"><span class="toc-num">1</span> Overview</a>
+                <a href="#section-2" class="toc-item"><span class="toc-num">2</span> Verify DNS</a>
+                <a href="#section-3" class="toc-item"><span class="toc-num">3</span> Firewall</a>
+                <a href="#section-4" class="toc-item"><span class="toc-num">4</span> Install Nginx</a>
+                <a href="#section-5" class="toc-item"><span class="toc-num">5</span> Nginx Config</a>
+                <a href="#section-6" class="toc-item"><span class="toc-num">6</span> SSL Certificate</a>
+                <a href="#section-7" class="toc-item"><span class="toc-num">7</span> Docker</a>
+                <a href="#section-8" class="toc-item"><span class="toc-num">8</span> Keycloak</a>
+                <a href="#section-9" class="toc-item"><span class="toc-num">9</span> Testing</a>
+                <a href="#section-10" class="toc-item"><span class="toc-num">10</span> Commands</a>
+            </div>
+        </nav>
+
+        <!-- Section 1: Overview -->
+        <section class="section" id="section-1">
+            <h2><span class="section-number">1</span> Overview</h2>
+
+            <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 1.05rem; line-height: 1.8;">
+                This guide walks you through setting up Nginx as a reverse proxy for the MarketForecaster Admin Panel with SSL/TLS termination using Let's Encrypt certificates.
+            </p>
+
+            <h3>What This Setup Achieves</h3>
+            <div class="table-wrapper">
+                <table>
+                    <tr><th>Component</th><th>Purpose</th></tr>
+                    <tr><td>Nginx</td><td>Reverse proxy, SSL termination & request routing</td></tr>
+                    <tr><td>Let's Encrypt</td><td>Free SSL/TLS certificates with auto-renewal</td></tr>
+                    <tr><td>Docker Compose</td><td>Container orchestration for frontend & backend</td></tr>
+                    <tr><td>Keycloak</td><td>Authentication & authorization (PKCE flow)</td></tr>
+                </table>
+            </div>
+
+            <h3>Traffic Flow</h3>
+            <p class="purpose">
+                Internet (HTTPS :443) &#8594; Nginx (SSL Termination) &#8594; Frontend (:3000) / Backend API (:8500)
+            </p>
+        </section>
+
+        <!-- Section 2: Verify DNS -->
+        <section class="section" id="section-2">
+            <h2><span class="section-number">2</span> Verify DNS Configuration</h2>
+
+            <h3>Step 2.1: Check your server public IP</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">curl -s ifconfig.me</div>
+            </div>
+            <p class="purpose">Displays the public IP address of the current server</p>
+
+            <h3>Step 2.2: Verify domain resolves to server IP</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">nslookup dev2.marketforecaster.com</div>
+            </div>
+            <p class="purpose">Confirms DNS A-record is correctly pointing to this server</p>
+        </section>
+
+        <!-- Section 3: Firewall -->
+        <section class="section" id="section-3">
+            <h2><span class="section-number">3</span> Firewall Configuration</h2>
+
+            <h3>3.1 AWS Security Group (Mandatory)</h3>
+            <div class="table-wrapper">
+                <table>
+                    <tr><th>Type</th><th>Port</th><th>Source</th></tr>
+                    <tr><td>HTTP</td><td>80</td><td>0.0.0.0/0</td></tr>
+                    <tr><td>HTTPS</td><td>443</td><td>0.0.0.0/0</td></tr>
+                </table>
+            </div>
+
+            <h3>3.2 UFW Firewall (If Enabled)</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Allow HTTP</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo ufw allow 80/tcp</div>
+            </div>
+            <p class="purpose">Allows HTTP traffic for SSL certificate verification</p>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Allow HTTPS</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo ufw allow 443/tcp</div>
+            </div>
+            <p class="purpose">Allows secure HTTPS traffic</p>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Check Status</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo ufw status</div>
+            </div>
+            <p class="purpose">Confirms firewall rules are active</p>
+        </section>
+
+        <!-- Section 4: Install Nginx and Certbot -->
+        <section class="section" id="section-4">
+            <h2><span class="section-number">4</span> Install Nginx and Certbot</h2>
+
+            <h3>Step 4.1: Update package list</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo apt update</div>
+            </div>
+            <p class="purpose">Refreshes Ubuntu package index</p>
+
+            <h3>Step 4.2: Install Nginx</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo apt install nginx -y</div>
+            </div>
+            <p class="purpose">Installs Nginx web server</p>
+
+            <h3>Step 4.3: Install Certbot</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo apt install certbot python3-certbot-nginx -y</div>
+            </div>
+            <p class="purpose">Installs Let's Encrypt client with Nginx integration</p>
+
+            <h3>Step 4.4: Verify installations</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">nginx -v && certbot --version</div>
+            </div>
+            <p class="purpose">Confirms both Nginx and Certbot are installed correctly</p>
+        </section>
+
+        <!-- Section 5: Create Nginx Configuration -->
+        <section class="section" id="section-5">
+            <h2><span class="section-number">5</span> Create Nginx Configuration</h2>
+
+            <h3>Step 5.1: Create site config file</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo nano /etc/nginx/sites-available/dev2.marketforecaster.com</div>
+            </div>
+            <p class="purpose">Creates a dedicated Nginx config file for this domain</p>
+
+            <div class="alert alert-info">
+                <div class="alert-icon">&#128221;</div>
+                <div>File name must match your domain name for clarity</div>
+            </div>
+
+            <div class="alert alert-info">
+                <div class="alert-icon">&#9000;</div>
+                <div>
+                    <strong>Nano Editor Shortcuts:</strong><br>
+                    After opening the file, use these shortcuts to paste and save:<br><br>
+                    <code>Right-click</code> or <code>Ctrl+Shift+V</code> — Paste configuration<br>
+                    <code>Ctrl+O</code> — Save file<br>
+                    <code>Enter</code> — Confirm filename<br>
+                    <code>Ctrl+X</code> — Exit nano
+                </div>
+            </div>
+
+            <h3>Step 5.2: Nginx Configuration Content</h3>
+            <div class="command-block config-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Nginx Config</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">server {
+    listen 80;
+    server_name dev2.marketforecaster.com;
+
+    # Backend API routing
+    location /api/ {
+        rewrite ^/api/(.*) /$1 break;
+        proxy_pass http://localhost:8500;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Frontend routing
+    location / {
+        proxy_pass http://localhost:3000;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}</div>
+            </div>
+
+            <h3>Step 5.3: Enable the site</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo ln -s /etc/nginx/sites-available/dev2.marketforecaster.com /etc/nginx/sites-enabled/</div>
+            </div>
+            <p class="purpose">Creates symlink to activate the site configuration</p>
+
+            <h3>Step 5.4: Test and reload Nginx</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo nginx -t && sudo systemctl reload nginx</div>
+            </div>
+            <p class="purpose">Validates config and applies changes without downtime</p>
+        </section>
+
+        <!-- Section 6: SSL Certificate -->
+        <section class="section" id="section-6">
+            <h2><span class="section-number">6</span> Generate SSL Certificate</h2>
+
+            <h3>Step 6.1: Run Certbot</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo certbot --nginx -d dev2.marketforecaster.com</div>
+            </div>
+            <p class="purpose">Requests and installs SSL certificate from Let's Encrypt</p>
+
+            <div class="alert alert-warning">
+                <div class="alert-icon">&#9888;&#65039;</div>
+                <div>Replace with your own domain name</div>
+            </div>
+
+            <div class="alert alert-success">
+                <div class="alert-icon">&#128231;</div>
+                <div><strong>Step 6.2:</strong> Provide your email when prompted (used for certificate expiry notifications)</div>
+            </div>
+        </section>
+
+        <!-- Section 7: Docker -->
+        <section class="section" id="section-7">
+            <h2><span class="section-number">7</span> Start Docker Containers</h2>
+
+            <h3>Step 7.1: Navigate to project directory</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">cd ~/MarketForecaster/MarketForecaster-Admin-Panel</div>
+            </div>
+            <p class="purpose">Navigate into Admin Panel project directory</p>
+
+            <h3>Step 7.2: Build and start containers</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">docker compose up -d --build</div>
+            </div>
+            <p class="purpose">Builds images and starts containers in detached mode</p>
+        </section>
+
+        <!-- Section 8: Keycloak -->
+        <section class="section" id="section-8">
+            <h2><span class="section-number">8</span> Keycloak PKCE Configuration</h2>
+
+            <h3>Step 8.1: Verify PKCE in frontend</h3>
+            <p class="purpose">File: <code>frontend/src/components/KeycloakProvider.tsx</code></p>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Config Value</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">pkceMethod: 'S256'</div>
+            </div>
+            <p class="purpose">Enables secure OAuth PKCE flow with SHA-256</p>
+
+            <h3>Step 8.2: Update Keycloak Client</h3>
+            <p class="purpose">Add the following in Keycloak Admin Console:</p>
+
+            <h4>Valid Redirect URIs</h4>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Keycloak</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">https://dev2.marketforecaster.com/*</div>
+            </div>
+
+            <h4>Web Origins</h4>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Keycloak</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">https://dev2.marketforecaster.com</div>
+            </div>
+
+            <div class="alert alert-warning">
+                <div class="alert-icon">&#128683;</div>
+                <div>Do <strong>NOT</strong> add <code>/*</code> in Web Origins - it will break CORS</div>
+            </div>
+        </section>
+
+        <!-- Section 9: Testing -->
+        <section class="section" id="section-9">
+            <h2><span class="section-number">9</span> Testing</h2>
+
+            <h3>Step 9.1: Test frontend access</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">curl -I https://dev2.marketforecaster.com</div>
+            </div>
+            <p class="purpose">Confirms HTTPS access to frontend is working</p>
+
+            <h3>Step 9.2: Test backend API</h3>
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Terminal</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">curl -I https://dev2.marketforecaster.com/api/health</div>
+            </div>
+            <p class="purpose">Confirms API routing through Nginx reverse proxy</p>
+        </section>
+
+        <!-- Section 10: Common Commands -->
+        <section class="section" id="section-10">
+            <h2><span class="section-number">10</span> Common Commands Reference</h2>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Check Nginx status</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo systemctl status nginx</div>
+            </div>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Reload Nginx safely</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo nginx -t && sudo systemctl reload nginx</div>
+            </div>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Renew SSL certificates</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">sudo certbot renew --dry-run</div>
+            </div>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> View container logs</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">docker compose logs -f</div>
+            </div>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="command-label"><span class="command-dot"></span> Check container status</span>
+                    <button class="copy-btn" onclick="copyCommand(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="command-content">docker compose ps</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-badges">
+                <span class="footer-badge"><span class="footer-badge-dot"></span> Version 2.0</span>
+                <span class="footer-badge">Ubuntu 24.04 LTS</span>
+                <span class="footer-badge">Nginx + Docker</span>
+            </div>
+            <p>MarketForecaster Admin Panel - Production Deployment Guide</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference or default to dark
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            htmlElement.setAttribute('data-theme', 'light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            if (newTheme === 'light') {
+                htmlElement.setAttribute('data-theme', 'light');
+            } else {
+                htmlElement.removeAttribute('data-theme');
+            }
+
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Copy command functionality
+        function copyCommand(button) {
+            const commandBlock = button.closest('.command-block');
+            const commandContent = commandBlock.querySelector('.command-content');
+            const text = commandContent.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                // Fallback
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Intersection Observer for sections
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smooth scroll for TOC links
+        document.querySelectorAll('.toc-item').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
